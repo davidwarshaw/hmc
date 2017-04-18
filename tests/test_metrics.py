@@ -13,13 +13,14 @@ from sklearn import metrics as skmetrics
 import hmc
 import hmc.metrics as metrics
 
+
 class TestMetrics(unittest.TestCase):
 
     def setUp(self):
         self.ch = hmc.load_shades_class_hierachy()
         self.X, self.y = hmc.load_shades_data()
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y,
-            test_size=0.50, random_state=0)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X, self.y, test_size=0.50, random_state=0)
         self.dt = hmc.DecisionTreeHierarchicalClassifier(self.ch)
         self.dt_nonh = tree.DecisionTreeClassifier()
         self.dt = self.dt.fit(self.X_train, self.y_train)
@@ -27,7 +28,7 @@ class TestMetrics(unittest.TestCase):
         self.y_pred = self.dt.predict(self.X_test)
         self.y_pred_nonh = self.dt_nonh.predict(self.X_test)
 
-    ## General Scores
+    # General Scores
     # Average accuracy
     def test_accuracy_score(self):
         accuracy = metrics.accuracy_score(self.ch, self.y_test, self.y_pred)
@@ -35,7 +36,7 @@ class TestMetrics(unittest.TestCase):
         # Hierachical classification should be at least as accurate as traditional classification
         self.assertTrue(accuracy >= accuracy_sk)
 
-    ## Hierarchy Precision / Recall
+    # Hierarchy Precision / Recall
     # Ancestors Scores (Super Class)
     # Precision
     def test_precision_score_ancestors(self):
@@ -52,7 +53,8 @@ class TestMetrics(unittest.TestCase):
     # Descendants Scores (Sub Class)
     # Precision
     def test_precision_score_descendants(self):
-        precision_descendants = metrics.precision_score_descendants(self.ch, self.y_test, self.y_pred)
+        precision_descendants = metrics.precision_score_descendants(
+            self.ch, self.y_test, self.y_pred)
         precision_sk = skmetrics.precision_score(self.y_test, self.y_pred, average="macro")
         self.assertTrue(precision_descendants >= precision_sk)
 
@@ -74,6 +76,7 @@ class TestMetrics(unittest.TestCase):
         f1_descendants = metrics.f1_score_descendants(self.ch, self.y_test, self.y_pred)
         f1_sk = skmetrics.f1_score(self.y_test, self.y_pred, average="macro")
         self.assertTrue(f1_descendants >= f1_sk)
+
 
 if __name__ == '__main__':
     unittest.main()

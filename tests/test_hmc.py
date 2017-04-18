@@ -11,6 +11,7 @@ from sklearn.cross_validation import train_test_split
 
 import hmc
 
+
 class TestClassHierarchy(unittest.TestCase):
 
     def test_count_classes(self):
@@ -66,6 +67,7 @@ class TestClassHierarchy(unittest.TestCase):
         # Adding a child with a new parent should throw an exception
         self.assertRaises(ValueError, ch.add_node, "slate", "light")
 
+
 class TestDecisionTreeHierarchicalClassifier(unittest.TestCase):
 
     def test_fit(self):
@@ -103,15 +105,15 @@ class TestDecisionTreeHierarchicalClassifier(unittest.TestCase):
             return is_hierarchical
 
         stage_predictions = dt._predict_stages(X)
-        stage_predictions['Hierarchical'] = stage_predictions.apply(lambda row: row_is_hierarchical(row), axis=1)
+        stage_predictions['Hierarchical'] = stage_predictions.apply(
+            lambda row: row_is_hierarchical(row), axis=1)
         # Each stage of classification should descend from the previous class
         self.assertEqual(len(stage_predictions[stage_predictions['Hierarchical'] != True]), 0)
 
     def test_score(self):
         ch = hmc.load_shades_class_hierachy()
         X, y = hmc.load_shades_data()
-        X_train, X_test, y_train, y_test = train_test_split(X, y,
-            test_size = 0.50, random_state = 0)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.50, random_state=0)
         dt = hmc.DecisionTreeHierarchicalClassifier(ch)
         dt_nonh = tree.DecisionTreeClassifier()
         dt = dt.fit(X_train, y_train)
@@ -127,6 +129,7 @@ class TestDecisionTreeHierarchicalClassifier(unittest.TestCase):
         dt = hmc.DecisionTreeHierarchicalClassifier(ch)
         # Scoring without fitting should raise exception
         self.assertRaises(ValueError, dt.score, X, y)
+
 
 if __name__ == '__main__':
     unittest.main()
